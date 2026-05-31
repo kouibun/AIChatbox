@@ -35,14 +35,16 @@ export function ConversationList({
           >
             <span>{conversation.title}</span>
 
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                onDeleteConversation(conversation.id);
-              }}
-            >
-              ×
-            </button>
+            {conversations.length > 1 && (
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDeleteConversation(conversation.id);
+                }}
+              >
+                ×
+              </button>
+            )}
           </div>
         ))}
       </div>
