@@ -8,8 +8,13 @@ import './styles/globals.css';
 import { ConversationList } from './components/chat/ConversationList';
 
 function App() {
-  const { currentConversation, currentConversationId, conversations } =
-    useCurrentConversions();
+  const {
+    currentConversation,
+    currentConversationId,
+    conversations,
+    isSending,
+    errorMessage,
+  } = useCurrentConversions();
   const {
     selectConversation,
     createConversation,
@@ -39,7 +44,8 @@ function App() {
           </header>
 
           <MessageList messages={currentConversation.messages} />
-          <InputBox onSend={sendMessage} />
+          {errorMessage && <p className='error-message'>{errorMessage}</p>}
+          <InputBox onSend={sendMessage} disabled={isSending} />
         </main>
       </div>
     </div>

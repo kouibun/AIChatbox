@@ -10,9 +10,14 @@ export const useCurrentConversions = () => {
     (conv) => conv.id === currentConversationId,
   );
 
+  const isSending = useChatStore((state) => state.isSending);
+  const errorMessage = useChatStore((state) => state.errorMessage);
+
   return {
     currentConversation,
     currentConversationId,
     conversations,
+    isSending,
+    errorMessage,
   };
 };

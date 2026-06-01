@@ -1,18 +1,18 @@
 import { useState } from 'react';
 
 interface InputBoxProps {
-  onSend: (message: string) => void;
+  onSend: (message: string) => void | Promise<void>;
+  disabled?: boolean;
 }
 
-export function InputBox({ onSend }: InputBoxProps) {
+export function InputBox({ onSend, disabled = false }: InputBoxProps) {
   const [input, setInput] = useState('');
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmedInput = input.trim();
-    if (trimmedInput) {
-      onSend(trimmedInput);
-      setInput('');
-    }
+    if (!trimmedInput || disabled) return;
+    await onSend(trimmedInput);
+    setInput('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -30,7 +30,9 @@ export function InputBox({ onSend }: InputBoxProps) {
         placeholder='メッセージを入力してください'
         onKeyDown={handleKeyDown}
       />
-      <button onClick={handleSend}>送信</button>
+      <button onClick={handleSend} disabled={disabled}>
+        {disabled ? '送信中...' : '送信'}
+      </button>
     </div>
   );
 }

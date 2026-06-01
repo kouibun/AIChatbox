@@ -1,16 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { sendChatMessage } from '../api/chatAPi';
 
 import type { Conversation, Message } from '../types/chat';
 
 interface ChatState {
   conversations: Conversation[];
   currentConversationId: string;
+  isSending: boolean;
+  errorMessage: string | null;
 
   selectConversation: (conversationId: string) => void;
   createConversation: () => void;
   deleteConversation: (conversationId: string) => void;
-  sendMessage: (content: string) => void;
+  sendMessage: (content: string) => Promise<void>;
 }
 
 const initialConversations: Conversation[] = [
@@ -33,6 +36,8 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       conversations: initialConversations,
       currentConversationId: initialConversations[0].id,
+      isSending: false,
+      errorMessage: null,
 
       selectConversation: (conversationId) => {
         set({ currentConversationId: conversationId });
@@ -77,7 +82,7 @@ export const useChatStore = create<ChatState>()(
               : currentConversationId,
         });
       },
-      sendMessage: (content) => {
+      sendMessage: async (content) => {
         const { currentConversationId } = get();
 
         const userMessage: Message = {
@@ -87,29 +92,43 @@ export const useChatStore = create<ChatState>()(
           createdAt: new Date().toISOString(),
         };
 
-        const assistantMessage: Message = {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content: `「${content}」について考えています。`,
-          createdAt: new Date().toISOString(),
-        };
-
         set((state) => ({
           conversations: state.conversations.map((conversation) => {
             if (conversation.id !== currentConversationId) {
               return conversation;
             }
-
             return {
               ...conversation,
-              messages: [
-                ...conversation.messages,
-                userMessage,
-                assistantMessage,
-              ],
+              messages: [...conversation.messages, userMessage],
             };
           }),
+          isSending: true,
+          errorMessage: null,
         }));
+
+        try {
+          const response = await sendChatMessage({ content });
+
+          set((state) => ({
+            conversations: state.conversations.map((conversation) => {
+              if (conversation.id !== currentConversationId) {
+                return conversation;
+              }
+
+              return {
+                ...conversation,
+                messages: [...conversation.messages, response.data],
+              };
+            }),
+
+            isSending: false,
+          }));
+        } catch {
+          set({
+            isSending: false,
+            errorMessage: 'メッセージの送信に失敗しました。',
+          });
+        }
       },
     }),
     {

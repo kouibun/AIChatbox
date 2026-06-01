@@ -170,3 +170,11 @@ button {
   background: #111827;
   color: #ffffff;
 }
+
+.error-message {
+  margin: 0 16px 12px;
+
+  color: #dc2626;
+
+  font-size: 14px;
+}
