@@ -1,31 +1,21 @@
 import { MessageList } from './components/chat/MessageList';
 import { InputBox } from './components/chat/InputBox';
 
-import { useChatStore } from './stores/chatStore';
+import { useCurrentConversions } from './hooks/useCurrentConversions';
+import { useChatActions } from './hooks/useChatActions';
 
 import './styles/globals.css';
 import { ConversationList } from './components/chat/ConversationList';
 
 function App() {
-  const conversions = useChatStore((state) => state.conversations);
-  const currentConversationId = useChatStore(
-    (state) => state.currentConversationId,
-  );
-  const handleSelectConversation = useChatStore(
-    (state) => state.selectConversation,
-  );
-  const handleCreateConversation = useChatStore(
-    (state) => state.createConversation,
-  );
-  const handleDeleteConversation = useChatStore(
-    (state) => state.deleteConversation,
-  );
-
-  const handleSend = useChatStore((state) => state.sendMessage);
-
-  const currentConversation = conversions.find(
-    (conv) => conv.id === currentConversationId,
-  );
+  const { currentConversation, currentConversationId, conversations } =
+    useCurrentConversions();
+  const {
+    selectConversation,
+    createConversation,
+    deleteConversation,
+    sendMessage,
+  } = useChatActions();
 
   if (!currentConversation) {
     return <div>Conversation not found</div>;
@@ -35,11 +25,11 @@ function App() {
     <div className='app'>
       <div className='layout'>
         <ConversationList
-          conversations={conversions}
+          conversations={conversations}
           currentConversationId={currentConversationId}
-          onSelectConversation={handleSelectConversation}
-          onCreateConversation={handleCreateConversation}
-          onDeleteConversation={handleDeleteConversation}
+          onSelectConversation={selectConversation}
+          onCreateConversation={createConversation}
+          onDeleteConversation={deleteConversation}
         />
 
         <main className='chat-panel'>
@@ -49,7 +39,7 @@ function App() {
           </header>
 
           <MessageList messages={currentConversation.messages} />
-          <InputBox onSend={handleSend} />
+          <InputBox onSend={sendMessage} />
         </main>
       </div>
     </div>
