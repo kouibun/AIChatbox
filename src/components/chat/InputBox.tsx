@@ -15,12 +15,20 @@ export function InputBox({ onSend }: InputBoxProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div className='input-box'>
       <input
-        type={input}
+        value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder='メッセージを入力してください'
+        onKeyDown={handleKeyDown}
       />
       <button onClick={handleSend}>送信</button>
     </div>

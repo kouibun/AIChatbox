@@ -1,27 +1,10 @@
-import { useState, useEffect } from 'react';
 import { MessageList } from './components/chat/MessageList';
 import { InputBox } from './components/chat/InputBox';
-import type { Message, Conversation } from './types/chat';
 
 import { useChatStore } from './stores/chatStore';
 
 import './styles/globals.css';
 import { ConversationList } from './components/chat/ConversationList';
-
-const initialConversations: Conversation[] = [
-  {
-    id: 'conversation-1',
-    title: 'New Chat',
-    messages: [
-      {
-        id: 'message-1',
-        role: 'assistant',
-        content: 'こんにちは、DevMateです。何を手伝いましょうか？',
-        createdAt: new Date().toISOString(),
-      },
-    ],
-  },
-];
 
 function App() {
   const conversions = useChatStore((state) => state.conversations);
