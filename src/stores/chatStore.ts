@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sendChatMessage } from '../api/chatAPi';
+import {
+  fetchConversations as fetchConversationsApi,
+  createConversation as createConversationApi,
+  deleteConversation as deleteConversationApi,
+} from '../api/conversationApi';
 
 import type { Conversation, Message } from '../types/chat';
 
@@ -9,78 +14,92 @@ interface ChatState {
   currentConversationId: string;
   isSending: boolean;
   errorMessage: string | null;
+  isLoadingConversations: boolean;
 
+  fetchConversations: () => Promise<void>;
   selectConversation: (conversationId: string) => void;
-  createConversation: () => void;
-  deleteConversation: (conversationId: string) => void;
+  createConversation: () => Promise<void>;
+  deleteConversation: (conversationId: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
 }
-
-const initialConversations: Conversation[] = [
-  {
-    id: 'conversation-1',
-    title: 'New Chat',
-    messages: [
-      {
-        id: 'message-1',
-        role: 'assistant',
-        content: 'こんにちは、DevMateです。何を手伝いましょうか？',
-        createdAt: new Date().toISOString(),
-      },
-    ],
-  },
-];
 
 export const useChatStore = create<ChatState>()(
   persist(
     (set, get) => ({
-      conversations: initialConversations,
-      currentConversationId: initialConversations[0].id,
+      conversations: [],
+      currentConversationId: '',
       isSending: false,
       errorMessage: null,
+      isLoadingConversations: false,
 
       selectConversation: (conversationId) => {
-        set({ currentConversationId: conversationId });
+        set({ currentConversationId: conversationId, errorMessage: null });
       },
 
-      createConversation: () => {
-        const { conversations } = get();
-        const newConversation: Conversation = {
-          id: crypto.randomUUID(),
-          title: `New Chat ${conversations.length + 1}`,
-          messages: [
-            {
-              id: crypto.randomUUID(),
-              role: 'assistant',
-              content: '新しいチャットを開始しました。',
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        };
-        set((state) => ({
-          conversations: [...state.conversations, newConversation],
-          currentConversationId: newConversation.id,
-        }));
+      fetchConversations: async () => {
+        set({ isLoadingConversations: true });
+
+        try {
+          const response = await fetchConversationsApi();
+
+          if (response.success) {
+            set({
+              conversations: response.data,
+              currentConversationId: response.data[0]?.id,
+              isLoadingConversations: false,
+            });
+          }
+        } catch {
+          set({
+            errorMessage: '会話の取得に失敗しました。初期データを表示します。',
+          });
+        } finally {
+          set({ isLoadingConversations: false });
+        }
       },
 
-      deleteConversation: (conversationId) => {
+      createConversation: async () => {
+        set({ errorMessage: null });
+        try {
+          const response = await createConversationApi();
+          const newConversation = response.data;
+          set((state) => ({
+            conversations: [...state.conversations, newConversation],
+            currentConversationId: newConversation.id,
+          }));
+        } catch {
+          set({
+            errorMessage: '会話の作成に失敗しました。',
+          });
+        }
+      },
+
+      deleteConversation: async (conversationId) => {
         const { conversations, currentConversationId } = get();
 
         if (conversations.length === 1) {
           return;
         }
 
-        const nextConversations = conversations.filter(
-          (conversation) => conversation.id !== conversationId,
-        );
+        set({ errorMessage: null });
 
-        set({
-          conversations: nextConversations,
-          currentConversationId:
-            conversationId === currentConversationId
-              ? nextConversations[0].id
-              : currentConversationId,
-        });
+        try {
+          await deleteConversationApi(conversationId);
+          const nextConversations = conversations.filter(
+            (conversation) => conversation.id !== conversationId,
+          );
+          set({
+            conversations: nextConversations,
+            currentConversationId:
+              conversationId === currentConversationId
+                ? nextConversations[0].id
+                : currentConversationId,
+          });
+        } catch {
+          set({
+            errorMessage: '会話の削除に失敗しました。',
+          });
+        }
       },
       sendMessage: async (content) => {
         const { currentConversationId } = get();

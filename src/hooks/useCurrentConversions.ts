@@ -13,11 +13,16 @@ export const useCurrentConversions = () => {
   const isSending = useChatStore((state) => state.isSending);
   const errorMessage = useChatStore((state) => state.errorMessage);
 
+  const isLoadingConversations = useChatStore(
+    (state) => state.isLoadingConversations,
+  );
+
   return {
     currentConversation,
     currentConversationId,
     conversations,
     isSending,
     errorMessage,
+    isLoadingConversations,
   };
 };

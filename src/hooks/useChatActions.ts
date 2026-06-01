@@ -7,10 +7,13 @@ export const useChatActions = () => {
 
   const sendMessage = useChatStore((state) => state.sendMessage);
 
+  const fetchConversations = useChatStore((state) => state.fetchConversations);
+
   return {
     selectConversation,
     createConversation,
     deleteConversation,
     sendMessage,
+    fetchConversations,
   };
 };
