@@ -178,3 +178,32 @@ button {
 
   font-size: 14px;
 }
+
+.empty-state {
+  width: 100%;
+  max-width: 480px;
+  margin: auto;
+  padding: 32px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.empty-state p {
+  margin: 0 0 20px;
+  color: #6b7280;
+}
+
+.empty-state button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+}

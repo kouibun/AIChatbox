@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
+
+import { ConversationList } from './components/chat/ConversationList';
 import { MessageList } from './components/chat/MessageList';
 import { InputBox } from './components/chat/InputBox';
+import { EmptyState } from './components/common/EmptyState';
+import { ErrorMessage } from './components/common/ErrorMessage';
 
 import { useCurrentConversions } from './hooks/useCurrentConversions';
 import { useChatActions } from './hooks/useChatActions';
 
 import './styles/globals.css';
-import { ConversationList } from './components/chat/ConversationList';
 
 function App() {
   const {
@@ -32,7 +35,7 @@ function App() {
   }, [fetchConversations]);
 
   if (!currentConversation) {
-    return <div>Conversation not found</div>;
+    return <EmptyState title='Conversation not found' />;
   }
 
   return (
@@ -58,7 +61,7 @@ function App() {
             </header>
 
             <MessageList messages={currentConversation.messages} />
-            {errorMessage && <p className='error-message'>{errorMessage}</p>}
+            {errorMessage && <ErrorMessage message={errorMessage} />}
             <InputBox onSend={sendMessage} disabled={isSending} />
           </main>
         </div>
