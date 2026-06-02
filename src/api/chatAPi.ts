@@ -1,5 +1,6 @@
 import type { Message } from '../types/chat.ts';
 import type { ApiResponse } from './types.ts';
+import { createSuccessResponse, delay, shouldMockError } from './client.ts';
 
 interface SendMessageParams {
   content: string;
@@ -8,19 +9,16 @@ interface SendMessageParams {
 export const sendChatMessage = async (
   params: SendMessageParams,
 ): Promise<ApiResponse<Message>> => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  await delay(800);
 
-  return {
-    success: true,
-    message: 'ok',
-    data: {
-      id: crypto.randomUUID(),
+  if (shouldMockError()) {
+    throw new Error('Mock API error');
+  }
 
-      role: 'assistant',
-
-      content: `这是 mock API 返回的回复：「${params.content}」`,
-
-      createdAt: new Date().toISOString(),
-    },
-  };
+  return createSuccessResponse({
+    id: crypto.randomUUID(),
+    role: 'assistant',
+    content: `这是 mock API 返回的回复：「${params.content}」`,
+    createdAt: new Date().toISOString(),
+  });
 };

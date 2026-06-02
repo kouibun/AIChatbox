@@ -1,5 +1,10 @@
 import type { Conversation } from '../types/chat';
 import type { ApiResponse } from '../api/types';
+import {
+  delay,
+  createSuccessResponse,
+  shouldMockError,
+} from '../api/client.ts';
 
 const mockConversations: Conversation[] = [
   {
@@ -19,17 +24,21 @@ const mockConversations: Conversation[] = [
 export async function fetchConversations(): Promise<
   ApiResponse<Conversation[]>
 > {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await delay(500);
 
-  return {
-    success: true,
-    message: 'ok',
-    data: mockConversations,
-  };
+  if (shouldMockError()) {
+    throw new Error('Mock API error');
+  }
+
+  return createSuccessResponse(mockConversations);
 }
 
 export async function createConversation(): Promise<ApiResponse<Conversation>> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await delay(500);
+
+  if (shouldMockError()) {
+    throw new Error('Mock API error');
+  }
 
   const newConversation: Conversation = {
     id: crypto.randomUUID(),
@@ -44,21 +53,17 @@ export async function createConversation(): Promise<ApiResponse<Conversation>> {
     ],
   };
 
-  return {
-    success: true,
-    message: 'ok',
-    data: newConversation,
-  };
+  return createSuccessResponse(newConversation);
 }
 
 export async function deleteConversation(
   conversationId: string,
 ): Promise<ApiResponse<null>> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await delay(500);
 
-  return {
-    success: true,
-    message: 'ok',
-    data: null,
-  };
+  if (shouldMockError()) {
+    throw new Error('Mock API error');
+  }
+
+  return createSuccessResponse(null);
 }

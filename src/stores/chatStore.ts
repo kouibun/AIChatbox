@@ -37,6 +37,10 @@ export const useChatStore = create<ChatState>()(
       },
 
       fetchConversations: async () => {
+        if (get().conversations.length > 0) {
+          return;
+        }
+
         set({ isLoadingConversations: true });
 
         try {
