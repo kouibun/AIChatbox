@@ -7,6 +7,8 @@ import {
   deleteConversation as deleteConversationApi,
 } from '../api/conversationApi';
 
+import { getErrorMessage } from '../api/client';
+
 import type { Conversation, Message } from '../types/chat';
 
 interface ChatState {
@@ -57,9 +59,12 @@ export const useChatStore = create<ChatState>()(
               isLoadingConversations: false,
             });
           }
-        } catch {
+        } catch (error) {
           set({
-            errorMessage: '会話の取得に失敗しました。初期データを表示します。',
+            errorMessage: getErrorMessage(
+              error,
+              '会話の取得に失敗しました。初期データを表示します。',
+            ),
           });
         } finally {
           set({ isLoadingConversations: false });
@@ -75,9 +80,9 @@ export const useChatStore = create<ChatState>()(
             conversations: [...state.conversations, newConversation],
             currentConversationId: newConversation.id,
           }));
-        } catch {
+        } catch (error) {
           set({
-            errorMessage: '会話の作成に失敗しました。',
+            errorMessage: getErrorMessage(error, '会話の作成に失敗しました。'),
           });
         } finally {
           set({ isCreatingConversation: false });
@@ -103,9 +108,9 @@ export const useChatStore = create<ChatState>()(
                 ? nextConversations[0].id
                 : currentConversationId,
           });
-        } catch {
+        } catch (error) {
           set({
-            errorMessage: '会話の削除に失敗しました。',
+            errorMessage: getErrorMessage(error, '会話の削除に失敗しました。'),
           });
         } finally {
           set({ deleteConversationId: null });

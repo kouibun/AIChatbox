@@ -4,6 +4,8 @@ import {
   delay,
   createSuccessResponse,
   shouldMockError,
+  createApiError,
+  getErrorMessage,
 } from '../api/client.ts';
 
 const mockConversations: Conversation[] = [
@@ -27,7 +29,7 @@ export async function fetchConversations(): Promise<
   await delay(500);
 
   if (shouldMockError()) {
-    throw new Error('Mock API error');
+    throw createApiError('チャット履歴の取得に失敗しました。', 500);
   }
 
   return createSuccessResponse(mockConversations);
@@ -37,7 +39,7 @@ export async function createConversation(): Promise<ApiResponse<Conversation>> {
   await delay(500);
 
   if (shouldMockError()) {
-    throw new Error('Mock API error');
+    throw createApiError('チャットの作成に失敗しました。', 500);
   }
 
   const newConversation: Conversation = {
@@ -62,7 +64,7 @@ export async function deleteConversation(
   await delay(500);
 
   if (shouldMockError()) {
-    throw new Error('Mock API error');
+    throw createApiError('チャットの削除に失敗しました。', 500);
   }
 
   return createSuccessResponse(null);

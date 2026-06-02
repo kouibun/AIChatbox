@@ -1,6 +1,12 @@
 import type { Message } from '../types/chat.ts';
 import type { ApiResponse } from './types.ts';
-import { createSuccessResponse, delay, shouldMockError } from './client.ts';
+import {
+  createSuccessResponse,
+  delay,
+  shouldMockError,
+  createApiError,
+  getErrorMessage,
+} from './client.ts';
 
 interface SendMessageParams {
   content: string;
@@ -12,7 +18,7 @@ export const sendChatMessage = async (
   await delay(800);
 
   if (shouldMockError()) {
-    throw new Error('Mock API error');
+    throw createApiError('メッセージの送信に失敗しました。', 500);
   }
 
   return createSuccessResponse({

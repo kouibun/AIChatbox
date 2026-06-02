@@ -169,6 +169,7 @@ button {
   border-radius: 8px;
   background: #111827;
   color: #ffffff;
+  width: 100px;
 }
 
 .error-message {
