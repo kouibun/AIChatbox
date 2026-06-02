@@ -17,6 +17,14 @@ export const useCurrentConversions = () => {
     (state) => state.isLoadingConversations,
   );
 
+  const isCreatingConversation = useChatStore(
+    (state) => state.isCreatingConversation,
+  );
+
+  const deleteConversationId = useChatStore(
+    (state) => state.deleteConversationId,
+  );
+
   return {
     currentConversation,
     currentConversationId,
@@ -24,5 +32,7 @@ export const useCurrentConversions = () => {
     isSending,
     errorMessage,
     isLoadingConversations,
+    deleteConversationId,
+    isCreatingConversation,
   };
 };

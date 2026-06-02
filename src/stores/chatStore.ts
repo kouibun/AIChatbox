@@ -15,6 +15,8 @@ interface ChatState {
   isSending: boolean;
   errorMessage: string | null;
   isLoadingConversations: boolean;
+  isCreatingConversation: boolean;
+  deleteConversationId: string | null;
 
   fetchConversations: () => Promise<void>;
   selectConversation: (conversationId: string) => void;
@@ -31,6 +33,8 @@ export const useChatStore = create<ChatState>()(
       isSending: false,
       errorMessage: null,
       isLoadingConversations: false,
+      isCreatingConversation: false,
+      deleteConversationId: null,
 
       selectConversation: (conversationId) => {
         set({ currentConversationId: conversationId, errorMessage: null });
@@ -63,7 +67,7 @@ export const useChatStore = create<ChatState>()(
       },
 
       createConversation: async () => {
-        set({ errorMessage: null });
+        set({ errorMessage: null, isCreatingConversation: true });
         try {
           const response = await createConversationApi();
           const newConversation = response.data;
@@ -75,17 +79,17 @@ export const useChatStore = create<ChatState>()(
           set({
             errorMessage: '会話の作成に失敗しました。',
           });
+        } finally {
+          set({ isCreatingConversation: false });
         }
       },
 
       deleteConversation: async (conversationId) => {
         const { conversations, currentConversationId } = get();
-
         if (conversations.length === 1) {
           return;
         }
-
-        set({ errorMessage: null });
+        set({ errorMessage: null, deleteConversationId: conversationId });
 
         try {
           await deleteConversationApi(conversationId);
@@ -103,6 +107,8 @@ export const useChatStore = create<ChatState>()(
           set({
             errorMessage: '会話の削除に失敗しました。',
           });
+        } finally {
+          set({ deleteConversationId: null });
         }
       },
       sendMessage: async (content) => {

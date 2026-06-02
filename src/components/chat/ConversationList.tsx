@@ -3,6 +3,9 @@ import type { Conversation } from '../../types/chat.ts';
 interface ConversationListProps {
   conversations: Conversation[];
   currentConversationId: string;
+  isCreatingConversation: boolean;
+  deleteConversationId: string | null;
+
   onSelectConversation: (conversationId: string) => void;
   onCreateConversation: () => void;
   onDeleteConversation: (conversationId: string) => void;
@@ -11,6 +14,9 @@ interface ConversationListProps {
 export function ConversationList({
   conversations,
   currentConversationId,
+  isCreatingConversation,
+  deleteConversationId,
+
   onSelectConversation,
   onCreateConversation,
   onDeleteConversation,
@@ -19,7 +25,12 @@ export function ConversationList({
     <aside className='conversation-list'>
       <div className='conversation-list__header'>
         <h2>Chats</h2>
-        <button onClick={onCreateConversation}>＋</button>
+        <button
+          onClick={onCreateConversation}
+          disabled={isCreatingConversation}
+        >
+          {isCreatingConversation ? '...' : '＋'}
+        </button>
       </div>
 
       <div className='conversation-list__items'>
@@ -41,8 +52,9 @@ export function ConversationList({
                   event.stopPropagation();
                   onDeleteConversation(conversation.id);
                 }}
+                disabled={deleteConversationId === conversation.id}
               >
-                ×
+                {deleteConversationId === conversation.id ? '...' : '×'}
               </button>
             )}
           </div>

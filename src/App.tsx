@@ -16,6 +16,8 @@ function App() {
     isSending,
     errorMessage,
     isLoadingConversations,
+    isCreatingConversation,
+    deleteConversationId,
   } = useCurrentConversions();
   const {
     selectConversation,
@@ -45,6 +47,8 @@ function App() {
             onSelectConversation={selectConversation}
             onCreateConversation={createConversation}
             onDeleteConversation={deleteConversation}
+            isCreatingConversation={isCreatingConversation}
+            deleteConversationId={deleteConversationId}
           />
 
           <main className='chat-panel'>
