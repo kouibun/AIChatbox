@@ -3,6 +3,7 @@ import { AppLayout } from '../layouts/AppLayout';
 import { ChatPage } from '../pages/Chatpage';
 import { PromptPage } from '../pages/PromptPage';
 import { SettingsPage } from '../pages/SettingPage';
+import { NotFoundPage } from '../pages/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       },
       { path: 'prompts', element: <PromptPage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]);
