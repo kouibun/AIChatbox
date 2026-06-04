@@ -310,3 +310,157 @@ input:disabled {
   align-items: center;
   justify-content: center;
 }
+.prompt-page {
+  height: 100%;
+  display: flex;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.prompt-page__sidebar {
+  width: 360px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+}
+
+.prompt-page__header {
+  flex-shrink: 0;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prompt-page__header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.prompt-page__header button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+}
+
+.prompt-page__main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  display: flex;
+  overflow: hidden;
+}
+
+.prompt-list {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.prompt-empty {
+  margin: 16px;
+  color: #6b7280;
+}
+
+.prompt-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.prompt-item:hover {
+  background: #eef2ff;
+}
+
+.prompt-item--active {
+  border-color: #93c5fd;
+  background: #dbeafe;
+}
+
+.prompt-item__main h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.prompt-item__main p {
+  margin: 0 0 8px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.prompt-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.prompt-item__tags span {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 12px;
+}
+
+.prompt-item button {
+  margin-top: 8px;
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  padding: 0;
+}
+
+.prompt-form {
+  width: 100%;
+  max-width: 720px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prompt-form input,
+.prompt-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.prompt-form textarea {
+  min-height: 240px;
+  resize: vertical;
+}
+
+.prompt-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.prompt-form__actions button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+}
+
+.prompt-form__actions button:last-child {
+  background: #111827;
+  color: #ffffff;
+}
