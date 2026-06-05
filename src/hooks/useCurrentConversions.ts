@@ -1,7 +1,13 @@
 import { useChatStore } from '../stores/chatStore.ts';
+import { useConversationsQuery } from './useConversationsQuery.ts';
 
 export const useCurrentConversions = () => {
-  const conversations = useChatStore((state) => state.conversations);
+  const {
+    data: conversations = [],
+    isLoading,
+    error,
+  } = useConversationsQuery();
+
   const currentConversationId = useChatStore(
     (state) => state.currentConversationId,
   );
@@ -11,11 +17,6 @@ export const useCurrentConversions = () => {
   );
 
   const isSending = useChatStore((state) => state.isSending);
-  const errorMessage = useChatStore((state) => state.errorMessage);
-
-  const isLoadingConversations = useChatStore(
-    (state) => state.isLoadingConversations,
-  );
 
   const isCreatingConversation = useChatStore(
     (state) => state.isCreatingConversation,
@@ -30,8 +31,8 @@ export const useCurrentConversions = () => {
     currentConversationId,
     conversations,
     isSending,
-    errorMessage,
-    isLoadingConversations,
+    errorMessage: error instanceof Error ? error.message : null,
+    isLoadingConversations: isLoading,
     deleteConversationId,
     isCreatingConversation,
   };

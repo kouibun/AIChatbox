@@ -22,17 +22,19 @@ export function ChatPage() {
     isCreatingConversation,
     deleteConversationId,
   } = useCurrentConversions();
+
   const {
     selectConversation,
     createConversation,
     deleteConversation,
     sendMessage,
-    fetchConversations,
   } = useChatActions();
 
   useEffect(() => {
-    fetchConversations();
-  }, [fetchConversations]);
+    if (!currentConversationId && conversations.length > 0) {
+      selectConversation(conversations[0].id);
+    }
+  }, [currentConversationId, conversations, selectConversation]);
 
   if (!currentConversation) {
     return <EmptyState title='Conversation not found' />;
