@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import type { PromptTemplate } from '../../types/prompt';
-
-interface PromptFormValues {
-  title: string;
-  content: string;
-  tags: string;
-}
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  promoptSchema,
+  type PromptFormValues,
+} from '../../schemas/promptSchema';
 
 interface PromptFormProps {
   initialValue?: PromptTemplate;
@@ -22,62 +21,64 @@ export function PromptForm({
   onSubmit,
   onCancel,
 }: PromptFormProps) {
-  const [values, setValues] = useState<PromptFormValues>({
-    title: initialValue?.title ?? '',
-    content: initialValue?.content ?? '',
-    tags: initialValue?.tags.join(', ') ?? '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PromptFormValues>({
+    resolver: zodResolver(promoptSchema),
+    defaultValues: {
+      title: initialValue?.title || '',
+      content: initialValue?.content || '',
+      tags: initialValue?.tags.join(', ') || '',
+    },
   });
 
-  const handleSubmit = () => {
-    const title = values.title.trim();
-    const content = values.content.trim();
-
-    if (!title || !content) return;
-
+  const handleFormSubmit = (values: PromptFormValues) => {
     const tags = values.tags
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean);
-
+      ? values.tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      : [];
     onSubmit({
-      title,
-      content,
+      title: values.title.trim(),
+      content: values.content.trim(),
       tags,
     });
   };
 
   return (
-    <div className='prompt-form'>
-      <input
-        value={values.title}
-        onChange={(event) =>
-          setValues((prev) => ({ ...prev, title: event.target.value }))
-        }
-        placeholder='Prompt title'
-      />
+    <form className='prompt-form' onSubmit={handleSubmit(handleFormSubmit)}>
+      <div className='form-field'>
+        <input placeholder='Prompt title' {...register('title')} />
 
-      <textarea
-        value={values.content}
-        onChange={(event) =>
-          setValues((prev) => ({ ...prev, content: event.target.value }))
-        }
-        placeholder='Prompt content'
-      />
+        {errors.title && <p className='form-error'>{errors.title.message}</p>}
+      </div>
+      <div className='form-field'>
+        <textarea placeholder='Prompt content' {...register('content')} />
+        {errors.content && (
+          <p className='form-error'>{errors.content.message}</p>
+        )}
+      </div>
+      <div className='form-field'>
+        <input
+          placeholder='Tags: react, typescript, interview'
+          {...register('tags')}
+        />
 
-      <input
-        value={values.tags}
-        onChange={(event) =>
-          setValues((prev) => ({ ...prev, tags: event.target.value }))
-        }
-        placeholder='Tags: react, typescript, interview'
-      />
+        {errors.tags && <p className='form-error'>{errors.tags.message}</p>}
+      </div>
 
       <div className='prompt-form__actions'>
-        {onCancel && <button onClick={onCancel}>Cancel</button>}
-        <button onClick={handleSubmit}>
-          {initialValue ? 'Update' : 'Create'}
-        </button>
+        {onCancel && (
+          <button type='button' onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+
+        <button type='submit'>{initialValue ? 'Update' : 'Create'}</button>
       </div>
-    </div>
+    </form>
   );
 }

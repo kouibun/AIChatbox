@@ -464,3 +464,15 @@ input:disabled {
   background: #111827;
   color: #ffffff;
 }
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 13px;
+}
