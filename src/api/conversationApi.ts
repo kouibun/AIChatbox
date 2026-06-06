@@ -8,7 +8,7 @@ import {
   getErrorMessage,
 } from '../api/client.ts';
 
-const mockConversations: Conversation[] = [
+let mockConversations: Conversation[] = [
   {
     id: 'conversation-1',
     title: 'New Chat',
@@ -26,7 +26,7 @@ const mockConversations: Conversation[] = [
 export async function fetchConversations(): Promise<
   ApiResponse<Conversation[]>
 > {
-  await delay(500);
+  await delay(300);
 
   if (shouldMockError()) {
     throw createApiError('チャット履歴の取得に失敗しました。', 500);
@@ -36,7 +36,7 @@ export async function fetchConversations(): Promise<
 }
 
 export async function createConversation(): Promise<ApiResponse<Conversation>> {
-  await delay(500);
+  await delay(300);
 
   if (shouldMockError()) {
     throw createApiError('チャットの作成に失敗しました。', 500);
@@ -55,17 +55,25 @@ export async function createConversation(): Promise<ApiResponse<Conversation>> {
     ],
   };
 
+  mockConversations = [...mockConversations, newConversation];
+
   return createSuccessResponse(newConversation);
 }
 
 export async function deleteConversation(
   conversationId: string,
-): Promise<ApiResponse<null>> {
-  await delay(500);
+): Promise<ApiResponse<{ conversationId: string }>> {
+  await delay(300);
 
   if (shouldMockError()) {
-    throw createApiError('チャットの削除に失敗しました。', 500);
+    throw createApiError('チャットの削除に失敗しました。', 300);
   }
 
-  return createSuccessResponse(null);
+  mockConversations = mockConversations.filter(
+    (conversation) => conversation.id !== conversationId,
+  );
+
+  return createSuccessResponse({
+    conversationId,
+  });
 }

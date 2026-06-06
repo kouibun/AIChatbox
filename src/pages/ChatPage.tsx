@@ -7,6 +7,7 @@ import { EmptyState } from '../components/common/EmptyState';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 
 import { useCurrentConversions } from '../hooks/useCurrentConversions';
+import { useCreateConversationMutation } from '../hooks/mutations/useCreateConversationMutation';
 import { useChatActions } from '../hooks/useChatActions';
 
 import '../styles/globals.css';
@@ -19,55 +20,72 @@ export function ChatPage() {
     isSending,
     errorMessage,
     isLoadingConversations,
-    isCreatingConversation,
     deleteConversationId,
   } = useCurrentConversions();
 
-  const {
-    selectConversation,
-    createConversation,
-    deleteConversation,
-    sendMessage,
-  } = useChatActions();
+  const { selectConversation, deleteConversation, sendMessage } =
+    useChatActions();
+
+  const createConversationMutation = useCreateConversationMutation();
+
+  const firstConversationId = conversations[0]?.id;
 
   useEffect(() => {
-    if (!currentConversationId && conversations.length > 0) {
-      selectConversation(conversations[0].id);
+    if (!currentConversationId && firstConversationId) {
+      selectConversation(firstConversationId);
     }
-  }, [currentConversationId, conversations, selectConversation]);
+  }, [currentConversationId, firstConversationId, selectConversation]);
+
+  const handleCreateConversationMutation = async () => {
+    const res = await createConversationMutation.mutateAsync();
+    selectConversation(res.data.id);
+  };
+
+  if (createConversationMutation.isPending) {
+    return (
+      <div className='app'>
+        <div className='loading'>会話を読み込んでいます...</div>
+      </div>
+    );
+  }
 
   if (!currentConversation) {
-    return <EmptyState title='Conversation not found' />;
+    return (
+      <div className='app'>
+        <EmptyState
+          title='Conversation not found'
+          description='新しい会話を作成してください。'
+          actionslabel='新規作成'
+          onAction={handleCreateConversationMutation}
+        />
+      </div>
+    );
   }
 
   return (
     <div className='app'>
-      {isLoadingConversations ? (
-        <div className='loading'>会話を読み込んでいます...</div>
-      ) : (
-        <div className='layout'>
-          <ConversationList
-            conversations={conversations}
-            currentConversationId={currentConversationId}
-            onSelectConversation={selectConversation}
-            onCreateConversation={createConversation}
-            onDeleteConversation={deleteConversation}
-            isCreatingConversation={isCreatingConversation}
-            deleteConversationId={deleteConversationId}
-          />
+      <div className='layout'>
+        <ConversationList
+          conversations={conversations}
+          currentConversationId={currentConversationId}
+          onSelectConversation={selectConversation}
+          onCreateConversation={handleCreateConversationMutation}
+          onDeleteConversation={deleteConversation}
+          isCreatingConversation={createConversationMutation.isPending}
+          deleteConversationId={deleteConversationId}
+        />
 
-          <main className='chat-panel'>
-            <header className='chat-header'>
-              <h1>{currentConversation?.title}</h1>
-              <p>React + TypeScript Chat UI</p>
-            </header>
+        <main className='chat-panel'>
+          <header className='chat-header'>
+            <h1>{currentConversation?.title}</h1>
+            <p>React + TypeScript Chat UI</p>
+          </header>
 
-            <MessageList messages={currentConversation.messages} />
-            {errorMessage && <ErrorMessage message={errorMessage} />}
-            <InputBox onSend={sendMessage} disabled={isSending} />
-          </main>
-        </div>
-      )}
+          <MessageList messages={currentConversation.messages} />
+          {errorMessage && <ErrorMessage message={errorMessage} />}
+          <InputBox onSend={sendMessage} disabled={isSending} />
+        </main>
+      </div>
     </div>
   );
 }
