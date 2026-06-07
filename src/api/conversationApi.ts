@@ -5,7 +5,6 @@ import {
   createSuccessResponse,
   shouldMockError,
   createApiError,
-  getErrorMessage,
 } from '../api/client.ts';
 
 let mockConversations: Conversation[] = [

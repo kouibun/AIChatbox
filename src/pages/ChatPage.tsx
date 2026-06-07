@@ -8,6 +8,7 @@ import { ErrorMessage } from '../components/common/ErrorMessage';
 
 import { useCurrentConversions } from '../hooks/useCurrentConversions';
 import { useCreateConversationMutation } from '../hooks/mutations/useCreateConversationMutation';
+import { useDeleteConversationMutation } from '../hooks/mutations/useDeleteConversationMutation';
 import { useChatActions } from '../hooks/useChatActions';
 
 import '../styles/globals.css';
@@ -19,14 +20,12 @@ export function ChatPage() {
     conversations,
     isSending,
     errorMessage,
-    isLoadingConversations,
-    deleteConversationId,
   } = useCurrentConversions();
 
-  const { selectConversation, deleteConversation, sendMessage } =
-    useChatActions();
+  const { selectConversation, sendMessage } = useChatActions();
 
   const createConversationMutation = useCreateConversationMutation();
+  const deleteConversationMutation = useDeleteConversationMutation();
 
   const firstConversationId = conversations[0]?.id;
 
@@ -39,6 +38,16 @@ export function ChatPage() {
   const handleCreateConversationMutation = async () => {
     const res = await createConversationMutation.mutateAsync();
     selectConversation(res.data.id);
+  };
+
+  const handleDeleteConversationMutation = async (conversationId: string) => {
+    await deleteConversationMutation.mutateAsync(conversationId);
+    if (conversationId === currentConversationId) {
+      const nextConversation = conversations.find(
+        (item) => item.id !== conversationId,
+      );
+      selectConversation(nextConversation?.id || '');
+    }
   };
 
   if (createConversationMutation.isPending) {
@@ -70,9 +79,13 @@ export function ChatPage() {
           currentConversationId={currentConversationId}
           onSelectConversation={selectConversation}
           onCreateConversation={handleCreateConversationMutation}
-          onDeleteConversation={deleteConversation}
+          onDeleteConversation={handleDeleteConversationMutation}
           isCreatingConversation={createConversationMutation.isPending}
-          deleteConversationId={deleteConversationId}
+          deleteConversationId={
+            deleteConversationMutation.isPending
+              ? (deleteConversationMutation.variables ?? null)
+              : null
+          }
         />
 
         <main className='chat-panel'>
