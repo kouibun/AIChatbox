@@ -1,168 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { sendChatMessage } from '../api/chatAPi';
-import {
-  fetchConversations as fetchConversationsApi,
-  createConversation as createConversationApi,
-  deleteConversation as deleteConversationApi,
-} from '../api/conversationApi';
-
-import { getErrorMessage } from '../api/client';
-
-import type { Conversation, Message } from '../types/chat';
 
 interface ChatState {
-  conversations: Conversation[];
   currentConversationId: string;
-  isSending: boolean;
-  errorMessage: string | null;
-  isLoadingConversations: boolean;
-  isCreatingConversation: boolean;
-  deleteConversationId: string | null;
 
-  fetchConversations: () => Promise<void>;
   selectConversation: (conversationId: string) => void;
-  createConversation: () => Promise<void>;
-  deleteConversation: (conversationId: string) => Promise<void>;
-  sendMessage: (content: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>()(
   persist(
-    (set, get) => ({
-      conversations: [],
+    (set) => ({
       currentConversationId: '',
-      isSending: false,
-      errorMessage: null,
-      isLoadingConversations: false,
-      isCreatingConversation: false,
-      deleteConversationId: null,
 
       selectConversation: (conversationId) => {
-        set({ currentConversationId: conversationId, errorMessage: null });
-      },
-
-      fetchConversations: async () => {
-        if (get().conversations.length > 0) {
-          return;
-        }
-
-        set({ isLoadingConversations: true });
-
-        try {
-          const response = await fetchConversationsApi();
-
-          if (response.success) {
-            set({
-              conversations: response.data,
-              currentConversationId: response.data[0]?.id,
-              isLoadingConversations: false,
-            });
-          }
-        } catch (error) {
-          set({
-            errorMessage: getErrorMessage(
-              error,
-              '会話の取得に失敗しました。初期データを表示します。',
-            ),
-          });
-        } finally {
-          set({ isLoadingConversations: false });
-        }
-      },
-
-      createConversation: async () => {
-        set({ errorMessage: null, isCreatingConversation: true });
-        try {
-          const response = await createConversationApi();
-          const newConversation = response.data;
-          set((state) => ({
-            conversations: [...state.conversations, newConversation],
-            currentConversationId: newConversation.id,
-          }));
-        } catch (error) {
-          set({
-            errorMessage: getErrorMessage(error, '会話の作成に失敗しました。'),
-          });
-        } finally {
-          set({ isCreatingConversation: false });
-        }
-      },
-
-      deleteConversation: async (conversationId) => {
-        const { conversations, currentConversationId } = get();
-        if (conversations.length === 1) {
-          return;
-        }
-        set({ errorMessage: null, deleteConversationId: conversationId });
-
-        try {
-          await deleteConversationApi(conversationId);
-          const nextConversations = conversations.filter(
-            (conversation) => conversation.id !== conversationId,
-          );
-          set({
-            conversations: nextConversations,
-            currentConversationId:
-              conversationId === currentConversationId
-                ? nextConversations[0].id
-                : currentConversationId,
-          });
-        } catch (error) {
-          set({
-            errorMessage: getErrorMessage(error, '会話の削除に失敗しました。'),
-          });
-        } finally {
-          set({ deleteConversationId: null });
-        }
-      },
-      sendMessage: async (content) => {
-        const { currentConversationId } = get();
-
-        const userMessage: Message = {
-          id: crypto.randomUUID(),
-          role: 'user',
-          content,
-          createdAt: new Date().toISOString(),
-        };
-
-        set((state) => ({
-          conversations: state.conversations.map((conversation) => {
-            if (conversation.id !== currentConversationId) {
-              return conversation;
-            }
-            return {
-              ...conversation,
-              messages: [...conversation.messages, userMessage],
-            };
-          }),
-          isSending: true,
-          errorMessage: null,
-        }));
-
-        try {
-          const response = await sendChatMessage({ content });
-
-          set((state) => ({
-            conversations: state.conversations.map((conversation) => {
-              if (conversation.id !== currentConversationId) {
-                return conversation;
-              }
-
-              return {
-                ...conversation,
-                messages: [...conversation.messages, response.data],
-              };
-            }),
-
-            isSending: false,
-          }));
-        } catch {
-          set({
-            isSending: false,
-            errorMessage: 'メッセージの送信に失敗しました。',
-          });
-        }
+        set({ currentConversationId: conversationId });
       },
     }),
     {

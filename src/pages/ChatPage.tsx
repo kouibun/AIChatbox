@@ -9,6 +9,7 @@ import { ErrorMessage } from '../components/common/ErrorMessage';
 import { useCurrentConversions } from '../hooks/useCurrentConversions';
 import { useCreateConversationMutation } from '../hooks/mutations/useCreateConversationMutation';
 import { useDeleteConversationMutation } from '../hooks/mutations/useDeleteConversationMutation';
+import { useSendMessageMutation } from '../hooks/mutations/useSendMessageMutation';
 import { useChatActions } from '../hooks/useChatActions';
 
 import '../styles/globals.css';
@@ -18,14 +19,14 @@ export function ChatPage() {
     currentConversation,
     currentConversationId,
     conversations,
-    isSending,
     errorMessage,
   } = useCurrentConversions();
 
-  const { selectConversation, sendMessage } = useChatActions();
+  const { selectConversation } = useChatActions();
 
   const createConversationMutation = useCreateConversationMutation();
   const deleteConversationMutation = useDeleteConversationMutation();
+  const sendMessageMutation = useSendMessageMutation();
 
   const firstConversationId = conversations[0]?.id;
 
@@ -48,6 +49,14 @@ export function ChatPage() {
       );
       selectConversation(nextConversation?.id || '');
     }
+  };
+
+  const handleSendMessage = async (content: string) => {
+    if (!currentConversationId) return;
+    await sendMessageMutation.mutateAsync({
+      conversationId: currentConversationId,
+      content,
+    });
   };
 
   if (createConversationMutation.isPending) {
@@ -96,7 +105,10 @@ export function ChatPage() {
 
           <MessageList messages={currentConversation.messages} />
           {errorMessage && <ErrorMessage message={errorMessage} />}
-          <InputBox onSend={sendMessage} disabled={isSending} />
+          <InputBox
+            onSend={handleSendMessage}
+            disabled={sendMessageMutation.isPending}
+          />
         </main>
       </div>
     </div>

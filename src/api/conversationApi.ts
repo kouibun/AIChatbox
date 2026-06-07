@@ -1,4 +1,4 @@
-import type { Conversation } from '../types/chat';
+import type { Conversation, Message } from '../types/chat';
 import type { ApiResponse } from '../api/types';
 import {
   delay,
@@ -21,6 +21,40 @@ let mockConversations: Conversation[] = [
     ],
   },
 ];
+
+export async function sendMessageApi(params: {
+  conversationId: string;
+  content: string;
+}): Promise<ApiResponse<Message>> {
+  await delay(300);
+
+  const assistantMessage: Message = {
+    id: crypto.randomUUID(),
+    role: 'assistant',
+    content: `这是 mock API 返回的回复：「${params.content}」`,
+    createdAt: new Date().toISOString(),
+  };
+
+  const userMessage: Message = {
+    id: crypto.randomUUID(),
+    role: 'user',
+    content: params.content,
+    createdAt: new Date().toISOString(),
+  };
+
+  mockConversations = mockConversations.map((conversation) => {
+    if (conversation.id !== params.conversationId) {
+      return conversation;
+    }
+
+    return {
+      ...conversation,
+      messages: [...conversation.messages, userMessage, assistantMessage],
+    };
+  });
+
+  return createSuccessResponse(assistantMessage);
+}
 
 export async function fetchConversations(): Promise<
   ApiResponse<Conversation[]>
