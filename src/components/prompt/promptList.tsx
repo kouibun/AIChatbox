@@ -1,9 +1,9 @@
-import type { promptTemplte } from '../../types/prompt';
+import type { PromptTemplate } from '../../types/prompt';
 
 interface PromptListProps {
-  prompts: promptTemplte[];
+  prompts: PromptTemplate[];
   selectedPromptId?: string | null;
-  onSelectPrompt: (prompt: promptTemplte) => void;
+  onSelectPrompt: (id: string) => void;
   onDeletePrompt: (id: string) => void;
 }
 
