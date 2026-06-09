@@ -26,7 +26,11 @@ export async function sendMessageApi(params: {
   conversationId: string;
   content: string;
 }): Promise<ApiResponse<Message>> {
-  await delay(300);
+  await delay(3000);
+
+  if (shouldMockError(1)) {
+    throw createApiError('チャット失敗しました。', 500);
+  }
 
   const assistantMessage: Message = {
     id: crypto.randomUUID(),
