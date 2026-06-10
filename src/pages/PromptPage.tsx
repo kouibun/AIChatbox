@@ -7,7 +7,7 @@ import { PromptForm } from '../components/prompt/promptFrom';
 export function PromptPage() {
   const { prompts, createPrompt, updatePrompt, deletePrompt } =
     usePromptStore();
-  const [selectedPromptId, setSelectedPromptId] = useState(null);
+  const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
   const selectedPrompt = prompts.find(
@@ -71,7 +71,7 @@ export function PromptPage() {
           <EmptyState
             title='Prompt を選択してください'
             description='左側の一覧から Prompt を選ぶか、新規作成してください。'
-            actionLabel='新規作成'
+            actionslabel='新規作成'
             onAction={() => setIsCreating(true)}
           />
         )}

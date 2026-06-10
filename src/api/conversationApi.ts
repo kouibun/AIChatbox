@@ -26,9 +26,9 @@ export async function sendMessageApi(params: {
   conversationId: string;
   content: string;
 }): Promise<ApiResponse<Message>> {
-  await delay(3000);
+  await delay(300);
 
-  if (shouldMockError(1)) {
+  if (shouldMockError(0.5)) {
     throw createApiError('チャット失敗しました。', 500);
   }
 
