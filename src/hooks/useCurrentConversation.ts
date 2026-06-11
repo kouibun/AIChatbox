@@ -1,7 +1,7 @@
 import { useChatStore } from '../stores/chatStore.ts';
 import { useConversationsQuery } from './useConversationsQuery.ts';
 
-export const useCurrentConversation = () => {
+export const useCurrentConversions = () => {
   const { data: conversations = [], error } = useConversationsQuery();
 
   const currentConversationId = useChatStore(
