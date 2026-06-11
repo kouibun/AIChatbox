@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { EmptyState } from '../components/common/EmptyState';
 import { usePromptStore } from '../stores/promptStore';
-import { PromptList } from '../components/prompt/promptList';
-import { PromptForm } from '../components/prompt/promptFrom';
+import { PromptList } from '../components/prompt/PromptList';
+import { PromptForm } from '../components/prompt/PromptForm';
 
 export function PromptPage() {
   const { prompts, createPrompt, updatePrompt, deletePrompt } =
@@ -71,7 +71,7 @@ export function PromptPage() {
           <EmptyState
             title='Prompt を選択してください'
             description='左側の一覧から Prompt を選ぶか、新規作成してください。'
-            actionslabel='新規作成'
+            actionLabel='新規作成'
             onAction={() => setIsCreating(true)}
           />
         )}

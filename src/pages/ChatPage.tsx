@@ -6,7 +6,7 @@ import { InputBox } from '../components/chat/InputBox';
 import { EmptyState } from '../components/common/EmptyState';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 
-import { useCurrentConversions } from '../hooks/useCurrentConversions';
+import { useCurrentConversation } from '../hooks/useCurrentConversation';
 import { useCreateConversationMutation } from '../hooks/mutations/useCreateConversationMutation';
 import { useDeleteConversationMutation } from '../hooks/mutations/useDeleteConversationMutation';
 import { useSendMessageMutation } from '../hooks/mutations/useSendMessageMutation';
@@ -20,7 +20,7 @@ export function ChatPage() {
     currentConversationId,
     conversations,
     errorMessage,
-  } = useCurrentConversions();
+  } = useCurrentConversation();
 
   const { selectConversation } = useChatActions();
 
@@ -73,7 +73,7 @@ export function ChatPage() {
         <EmptyState
           title='Conversation not found'
           description='新しい会話を作成してください。'
-          actionslabel='新規作成'
+          actionLabel='新規作成'
           onAction={handleCreateConversationMutation}
         />
       </div>

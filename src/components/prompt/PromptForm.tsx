@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import type { PromptTemplate } from '../../types/prompt';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  promoptSchema,
+  promptSchema,
   type PromptFormValues,
 } from '../../schemas/promptSchema';
 
@@ -26,7 +26,7 @@ export function PromptForm({
     handleSubmit,
     formState: { errors },
   } = useForm<PromptFormValues>({
-    resolver: zodResolver(promoptSchema),
+    resolver: zodResolver(promptSchema),
     defaultValues: {
       title: initialValue?.title || '',
       content: initialValue?.content || '',

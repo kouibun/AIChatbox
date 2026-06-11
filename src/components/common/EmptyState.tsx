@@ -1,22 +1,22 @@
 interface EmptyStateProps {
   title: string;
   description?: string;
-  actionslabel?: string;
+  actionLabel?: string;
   onAction?: () => void;
 }
 
 export function EmptyState({
   title,
   description,
-  actionslabel,
+  actionLabel,
   onAction,
 }: EmptyStateProps) {
   return (
     <div className='empty-state'>
       <h2>{title}</h2>
       {description && <p>{description}</p>}
-      {actionslabel && onAction && (
-        <button onClick={onAction}>{actionslabel}</button>
+      {actionLabel && onAction && (
+        <button onClick={onAction}>{actionLabel}</button>
       )}
     </div>
   );
