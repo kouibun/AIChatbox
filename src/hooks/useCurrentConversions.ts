@@ -2,11 +2,7 @@ import { useChatStore } from '../stores/chatStore.ts';
 import { useConversationsQuery } from './useConversationsQuery.ts';
 
 export const useCurrentConversions = () => {
-  const {
-    data: conversations = [],
-    isLoading,
-    error,
-  } = useConversationsQuery();
+  const { data: conversations = [], error } = useConversationsQuery();
 
   const currentConversationId = useChatStore(
     (state) => state.currentConversationId,

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { sendMessageApi } from '../../api/conversationApi';
 import { conversationQueryKeys } from '../queries/useConversationsQuery';
 import type { Conversation, Message } from '../../types/chat';
@@ -52,7 +52,7 @@ export const useSendMessageMutation = () => {
       } satisfies OptimisticContext;
     },
 
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       if (context?.previousConversations) {
         queryClient.setQueryData<Conversation[]>(
           conversationQueryKeys.all,
